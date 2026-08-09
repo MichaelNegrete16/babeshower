@@ -1,0 +1,606 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EFE7DB">
+<title>Generador de tarjetas &middot; Isaac David</title>
+<style>html{-webkit-text-size-adjust:100%}</style>
+</head>
+<body><title>Generador de tarjetas · Baby Shower Isaac David</title>
+
+<style>
+  :root {
+    --papel:      #FCF9F4;
+    --azul:       #7FA4C4;
+    --azul-tinta: #2F4F68;
+    --oro:        #C0A05C;
+
+    --pag-fondo:  #EFE7DB;
+    --pag-panel:  #FFFFFF;
+    --pag-texto:  #3D352C;
+    --pag-tenue:  #857767;
+    --pag-borde:  #DFD3C0;
+    --pag-campo:  #F7F2E9;
+
+    --serif: Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, "Times New Roman", serif;
+    --sans:  "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --pag-fondo: #1F1C18;
+      --pag-panel: #2A2620;
+      --pag-texto: #EDE5D9;
+      --pag-tenue: #A99C8B;
+      --pag-borde: #3C362D;
+      --pag-campo: #221F1A;
+    }
+  }
+  :root[data-theme="dark"] {
+    --pag-fondo: #1F1C18;
+    --pag-panel: #2A2620;
+    --pag-texto: #EDE5D9;
+    --pag-tenue: #A99C8B;
+    --pag-borde: #3C362D;
+    --pag-campo: #221F1A;
+  }
+  :root[data-theme="light"] {
+    --pag-fondo: #EFE7DB;
+    --pag-panel: #FFFFFF;
+    --pag-texto: #3D352C;
+    --pag-tenue: #857767;
+    --pag-borde: #DFD3C0;
+    --pag-campo: #F7F2E9;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    padding: 26px 18px 70px;
+    background: var(--pag-fondo);
+    color: var(--pag-texto);
+    font-family: var(--sans);
+    line-height: 1.55;
+  }
+
+  .hoja { max-width: 900px; margin: 0 auto; }
+
+  header { text-align: center; margin-bottom: 24px; }
+  .kicker {
+    font-size: 10.5px;
+    letter-spacing: .28em;
+    text-transform: uppercase;
+    color: var(--pag-tenue);
+    margin: 0 0 8px;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: clamp(25px, 5.5vw, 34px);
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+  .sub { color: var(--pag-tenue); margin: 0; font-size: 14.5px; }
+
+  .tablero {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  @media (min-width: 760px) {
+    .tablero { grid-template-columns: 320px 1fr; align-items: start; }
+  }
+
+  .panel {
+    background: var(--pag-panel);
+    border: 1px solid var(--pag-borde);
+    border-radius: 16px;
+    padding: 22px;
+  }
+  @media (min-width: 760px) {
+    .panel.mando { position: sticky; top: 22px; }
+  }
+
+  label {
+    display: block;
+    font-size: 10.5px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--pag-tenue);
+    margin: 0 0 7px;
+  }
+  .grupo + .grupo { margin-top: 20px; }
+
+  input[type="text"], select {
+    width: 100%;
+    font-family: var(--serif);
+    font-size: 17px;
+    color: var(--pag-texto);
+    background: var(--pag-campo);
+    border: 1px solid var(--pag-borde);
+    border-radius: 10px;
+    padding: 13px 14px;
+  }
+  input[type="text"]:focus, select:focus {
+    outline: none;
+    border-color: var(--azul);
+  }
+
+  .opciones { display: flex; gap: 7px; flex-wrap: wrap; }
+  .opciones button {
+    flex: 1;
+    min-width: 88px;
+    font-family: var(--sans);
+    font-size: 12.5px;
+    color: var(--pag-tenue);
+    background: var(--pag-campo);
+    border: 1px solid var(--pag-borde);
+    border-radius: 9px;
+    padding: 11px 8px;
+    cursor: pointer;
+    transition: all .18s ease;
+  }
+  .opciones button:hover { border-color: var(--azul); }
+  .opciones button[aria-pressed="true"] {
+    background: var(--azul-tinta);
+    border-color: var(--azul-tinta);
+    color: #FCF9F4;
+  }
+  .opciones button:focus-visible { outline: 2px solid var(--azul); outline-offset: 2px; }
+
+  .interruptor {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--pag-texto);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .interruptor input { width: 19px; height: 19px; accent-color: var(--azul-tinta); cursor: pointer; }
+
+  .btn-bajar {
+    width: 100%;
+    margin-top: 24px;
+    font-family: var(--sans);
+    font-size: 13px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #FCF9F4;
+    background: var(--azul-tinta);
+    border: none;
+    border-radius: 11px;
+    padding: 17px;
+    cursor: pointer;
+    box-shadow: 0 7px 18px rgba(47,79,104,.26);
+    transition: transform .18s ease;
+  }
+  .btn-bajar:hover { transform: translateY(-2px); }
+  .btn-bajar:disabled { opacity: .45; cursor: default; transform: none; }
+  .btn-bajar:focus-visible { outline: 2px solid var(--azul); outline-offset: 3px; }
+
+  .recado {
+    font-size: 12.5px;
+    color: var(--pag-tenue);
+    margin: 11px 0 0;
+    text-align: center;
+    min-height: 19px;
+  }
+  .recado.malo { color: #B4543E; }
+
+  .vista { text-align: center; }
+  #tarjeta {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 14px 36px rgba(74,58,40,.24);
+  }
+
+  .nota {
+    border-left: 3px solid var(--oro);
+    padding: 3px 0 3px 14px;
+    margin-top: 22px;
+    font-size: 13.5px;
+    color: var(--pag-tenue);
+  }
+</style>
+
+<div class="hoja">
+
+  <header>
+    <p class="kicker">Baby Shower · Isaac David</p>
+    <h1>Generador de tarjetas</h1>
+    <p class="sub">Escribe el nombre, mira cómo queda y descárgala.</p>
+  </header>
+
+  <div class="tablero">
+
+    <div class="panel mando">
+      <div class="grupo">
+        <label for="nombre">Nombre del invitado</label>
+        <input type="text" id="nombre" list="invitados" placeholder="Alexandra" autocomplete="off" spellcheck="false">
+        <datalist id="invitados"></datalist>
+      </div>
+
+      <div class="grupo">
+        <label>Cómo tratarlo</label>
+        <div class="opciones" id="tratos">
+          <button type="button" data-trato="ESTÁS INVITADA" aria-pressed="true">Invitada</button>
+          <button type="button" data-trato="ESTÁS INVITADO" aria-pressed="false">Invitado</button>
+          <button type="button" data-trato="ESTÁN INVITADOS" aria-pressed="false">Invitados</button>
+        </div>
+      </div>
+
+      <div class="grupo">
+        <label class="interruptor">
+          <input type="checkbox" id="con-datos">
+          Incluir fecha, hora y lugar
+        </label>
+      </div>
+
+      <button class="btn-bajar" id="bajar">Descargar tarjeta</button>
+      <p class="recado" id="recado"></p>
+    </div>
+
+    <div class="panel vista">
+      <canvas id="tarjeta" width="1080" height="1500"></canvas>
+      <p class="nota">Mándala por WhatsApp <strong>como documento</strong>, no como foto: así no se comprime y el dorado se ve limpio.</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const INVITADOS = [
+    "Adrián", "Juan Pablo", "Antonio", "Alexandra", "Darleys", "Iván Rey",
+    "Diana", "Andrea Llanos", "Brenda", "Daniela", "Rossana", "Jessica",
+    "Duvan", "Carlos", "Heyni", "Leandra", "Lilibeth", "Jean Pierre",
+    "Félix", "Daniela Acuña", "Jeni", "Dani", "Biviana", "Abraham",
+    "Melanie", "Abuelos", "Tía Berta", "Over", "Rafael", "Alejandra",
+    "Andrea", "Tía Negris", "Tío Nandito", "Albertito", "Karina",
+    "Tía Hilda", "Oswaldito", "Oswaldo", "Franklin", "Tía Deysi",
+    "Ricardo", "Smartinfo", "Adanies", "Lucho", "Sebastián", "Gledys",
+    "Luz Elena", "Nilcy", "Ana Gulfo", "Tulia",
+  ];
+
+  const TONO = {
+    fondo:   "#E6D5C0",
+    fondoAlto: "#F1E4D2",
+    papel:   "#FCF9F4",
+    papelBajo: "#F4EBDD",
+    azul:    "#7FA4C4",
+    tinta:   "#2F4F68",
+    oro:     "#C0A05C",
+    texto:   "#52463B",
+    tenue:   "#A08D78",
+  };
+
+  const SERIF = 'Georgia, "Iowan Old Style", "Palatino Linotype", Palatino, "Times New Roman", serif';
+
+  const lienzo = document.getElementById("tarjeta");
+  const ctx = lienzo.getContext("2d");
+
+  let trato = "ESTÁS INVITADA";
+
+  document.getElementById("invitados").innerHTML =
+    INVITADOS.map((n) => '<option value="' + n + '"></option>').join("");
+
+  /* ── Texto con espaciado entre letras, centrado ── */
+  function anchoEspaciado(texto, esp) {
+    let ancho = 0;
+    for (const letra of texto) ancho += ctx.measureText(letra).width + esp;
+    return ancho - esp;
+  }
+
+  function escribirEspaciado(texto, centro, y, esp) {
+    const previo = ctx.textAlign;
+    ctx.textAlign = "left";
+    let x = centro - anchoEspaciado(texto, esp) / 2;
+    for (const letra of texto) {
+      ctx.fillText(letra, x, y);
+      x += ctx.measureText(letra).width + esp;
+    }
+    ctx.textAlign = previo;
+  }
+
+  /* ── La silueta de arco ── */
+  function trazarArco(x, y, ancho, alto, radioAbajo) {
+    const r = ancho / 2;
+    ctx.beginPath();
+    ctx.moveTo(x, y + r);
+    ctx.arc(x + r, y + r, r, Math.PI, 0);
+    ctx.lineTo(x + ancho, y + alto - radioAbajo);
+    ctx.arcTo(x + ancho, y + alto, x + ancho - radioAbajo, y + alto, radioAbajo);
+    ctx.lineTo(x + radioAbajo, y + alto);
+    ctx.arcTo(x, y + alto, x, y + alto - radioAbajo, radioAbajo);
+    ctx.closePath();
+  }
+
+  /* ── Estrella de cuatro puntas ── */
+  function estrella(cx, cy, radio) {
+    ctx.beginPath();
+    for (let i = 0; i < 8; i++) {
+      const angulo = (Math.PI / 4) * i - Math.PI / 2;
+      const largo = i % 2 === 0 ? radio : radio * 0.32;
+      const px = cx + Math.cos(angulo) * largo;
+      const py = cy + Math.sin(angulo) * largo;
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fillStyle = TONO.oro;
+    ctx.fill();
+  }
+
+  function separador(cx, y) {
+    const brazo = 74;
+    const hueco = 26;
+    ctx.strokeStyle = TONO.oro;
+    ctx.lineWidth = 1.6;
+    ctx.globalAlpha = .75;
+    ctx.beginPath();
+    ctx.moveTo(cx - hueco - brazo, y);
+    ctx.lineTo(cx - hueco, y);
+    ctx.moveTo(cx + hueco, y);
+    ctx.lineTo(cx + hueco + brazo, y);
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+    estrella(cx, y, 11);
+  }
+
+  /* ── Armar los bloques de la tarjeta ── */
+  function bloques(nombre, conDatos) {
+    const filas = [];
+    const etiqueta = (texto, gap) => filas.push({
+      gap: gap, alto: 24,
+      pinta: (cx, y) => {
+        ctx.fillStyle = TONO.tenue;
+        ctx.font = "22px " + SERIF;
+        escribirEspaciado(texto, cx, y + 18, 7);
+      }
+    });
+
+    filas.push({ gap: 0, alto: 26, pinta: (cx, y) => estrella(cx, y + 13, 13) });
+
+    etiqueta(trato, 40);
+
+    filas.push({
+      gap: 20, alto: 66,
+      pinta: (cx, y) => {
+        ctx.fillStyle = TONO.tinta;
+        ctx.font = "italic 58px " + SERIF;
+        ctx.textAlign = "center";
+        ctx.fillText(nombre, cx, y + 52);
+      }
+    });
+
+    filas.push({ gap: 40, alto: 20, pinta: (cx, y) => separador(cx, y + 10) });
+
+    etiqueta("CON MUCHA ILUSIÓN", 38);
+    etiqueta("TE INVITAMOS AL", 10);
+
+    filas.push({
+      gap: 34, alto: 96,
+      pinta: (cx, y) => {
+        ctx.fillStyle = TONO.azul;
+        ctx.font = "italic 82px " + SERIF;
+        ctx.textAlign = "center";
+        ctx.fillText("Baby Shower", cx, y + 76);
+      }
+    });
+
+    filas.push({ gap: 30, alto: 20, pinta: (cx, y) => separador(cx, y + 10) });
+
+    etiqueta("DE", 32);
+
+    ["Isaac", "David"].forEach((parte, i) => {
+      filas.push({
+        gap: i === 0 ? 26 : 4, alto: 108,
+        pinta: (cx, y) => {
+          ctx.fillStyle = TONO.tinta;
+          ctx.font = "104px " + SERIF;
+          ctx.textAlign = "center";
+          ctx.fillText(parte, cx, y + 92);
+        }
+      });
+    });
+
+    filas.push({ gap: 40, alto: 20, pinta: (cx, y) => separador(cx, y + 10) });
+
+    const parrafo = [
+      "Estamos esperando la llegada de",
+      "nuestro pequeño gran milagro, y no",
+      "queremos celebrarlo sin ti.",
+    ];
+    parrafo.forEach((linea, i) => {
+      filas.push({
+        gap: i === 0 ? 38 : 14, alto: 32,
+        pinta: (cx, y) => {
+          ctx.fillStyle = TONO.texto;
+          ctx.font = "29px " + SERIF;
+          ctx.textAlign = "center";
+          ctx.fillText(linea, cx, y + 26);
+        }
+      });
+    });
+
+    if (conDatos) {
+      filas.push({ gap: 40, alto: 20, pinta: (cx, y) => separador(cx, y + 10) });
+      etiqueta("SÁBADO 5 DE SEPTIEMBRE", 34);
+      filas.push({
+        gap: 16, alto: 44,
+        pinta: (cx, y) => {
+          ctx.fillStyle = TONO.tinta;
+          ctx.font = "40px " + SERIF;
+          ctx.textAlign = "center";
+          ctx.fillText("6:00 PM", cx, y + 36);
+        }
+      });
+      filas.push({
+        gap: 18, alto: 32,
+        pinta: (cx, y) => {
+          ctx.fillStyle = TONO.texto;
+          ctx.font = "27px " + SERIF;
+          ctx.textAlign = "center";
+          ctx.fillText("Escallonvilla, por la tienda donde Efrén", cx, y + 26);
+        }
+      });
+    }
+
+    etiqueta("SUS PAPÁS", 46);
+
+    filas.push({
+      gap: 20, alto: 42,
+      pinta: (cx, y) => {
+        ctx.fillStyle = TONO.tinta;
+        ctx.font = "36px " + SERIF;
+        ctx.textAlign = "center";
+        ctx.fillText("Michael Negrete", cx, y + 34);
+      }
+    });
+    filas.push({
+      gap: 10, alto: 34,
+      pinta: (cx, y) => {
+        ctx.fillStyle = TONO.oro;
+        ctx.font = "italic 30px " + SERIF;
+        ctx.textAlign = "center";
+        ctx.fillText("&", cx, y + 27);
+      }
+    });
+    filas.push({
+      gap: 10, alto: 42,
+      pinta: (cx, y) => {
+        ctx.fillStyle = TONO.tinta;
+        ctx.font = "36px " + SERIF;
+        ctx.textAlign = "center";
+        ctx.fillText("Angie Sarmiento", cx, y + 34);
+      }
+    });
+
+    return filas;
+  }
+
+  /* ── Dibujar todo ── */
+  function pintar() {
+    const nombre = (document.getElementById("nombre").value || "").trim() || "Tu nombre";
+    const conDatos = document.getElementById("con-datos").checked;
+
+    const ANCHO = 1080;
+    const MARGEN = 56;
+    const RESPIRO_ARRIBA = 300;   // el arco necesita aire antes del contenido
+    const RESPIRO_ABAJO = 84;
+
+    const filas = bloques(nombre, conDatos);
+    const altoContenido = filas.reduce((suma, f) => suma + f.gap + f.alto, 0);
+    const altoTarjeta = RESPIRO_ARRIBA + altoContenido + RESPIRO_ABAJO;
+    const ALTO = altoTarjeta + MARGEN * 2;
+
+    lienzo.width = ANCHO;
+    lienzo.height = ALTO;
+
+    // Fondo beige
+    const fondo = ctx.createLinearGradient(0, 0, 0, ALTO);
+    fondo.addColorStop(0, TONO.fondoAlto);
+    fondo.addColorStop(1, TONO.fondo);
+    ctx.fillStyle = fondo;
+    ctx.fillRect(0, 0, ANCHO, ALTO);
+
+    // La tarjeta
+    const cx = ANCHO / 2;
+    const tx = MARGEN;
+    const ty = MARGEN;
+    const tw = ANCHO - MARGEN * 2;
+
+    ctx.save();
+    ctx.shadowColor = "rgba(74,58,40,.28)";
+    ctx.shadowBlur = 46;
+    ctx.shadowOffsetY = 18;
+    trazarArco(tx, ty, tw, altoTarjeta, 26);
+    const papel = ctx.createLinearGradient(0, ty, 0, ty + altoTarjeta);
+    papel.addColorStop(0, TONO.papel);
+    papel.addColorStop(1, TONO.papelBajo);
+    ctx.fillStyle = papel;
+    ctx.fill();
+    ctx.restore();
+
+    // Filete dorado por dentro
+    const dentro = 24;
+    trazarArco(tx + dentro, ty + dentro, tw - dentro * 2, altoTarjeta - dentro * 2, 16);
+    ctx.strokeStyle = TONO.oro;
+    ctx.globalAlpha = .6;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // El contenido
+    ctx.textBaseline = "alphabetic";
+    let y = ty + RESPIRO_ARRIBA;
+    filas.forEach((fila) => {
+      y += fila.gap;
+      fila.pinta(cx, y);
+      y += fila.alto;
+    });
+  }
+
+  /* ── Descargar ── */
+  function avisar(texto, malo) {
+    const recado = document.getElementById("recado");
+    recado.textContent = texto;
+    recado.classList.toggle("malo", !!malo);
+  }
+
+  document.getElementById("bajar").addEventListener("click", () => {
+    const nombre = (document.getElementById("nombre").value || "").trim();
+    if (!nombre) {
+      avisar("Escribe primero el nombre del invitado", true);
+      document.getElementById("nombre").focus();
+      return;
+    }
+
+    const archivo = "invitacion-" + nombre.toLowerCase()
+      .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") + ".png";
+
+    lienzo.toBlob((blob) => {
+      if (!blob) { avisar("No se pudo generar la imagen", true); return; }
+
+      if (window.claude && window.claude.downloads) {
+        avisar("Confirma la descarga…");
+        window.claude.downloads.save({ filename: archivo, data: blob })
+          .then(() => avisar("Descargada: " + archivo))
+          .catch((e) => {
+            if (e && e.code === "declined") avisar("Descarga cancelada");
+            else avisar("No se pudo descargar. Manten presionada la imagen para guardarla.", true);
+          });
+        return;
+      }
+
+      const url = URL.createObjectURL(blob);
+      const enlace = document.createElement("a");
+      enlace.href = url;
+      enlace.download = archivo;
+      enlace.click();
+      setTimeout(() => URL.revokeObjectURL(url), 4000);
+      avisar("Descargada: " + archivo);
+    }, "image/png");
+  });
+
+  /* ── Controles ── */
+  document.getElementById("nombre").addEventListener("input", () => { pintar(); avisar(""); });
+  document.getElementById("con-datos").addEventListener("change", pintar);
+
+  document.getElementById("tratos").addEventListener("click", (ev) => {
+    const boton = ev.target.closest("button");
+    if (!boton) return;
+    trato = boton.dataset.trato;
+    [...ev.currentTarget.children].forEach((b) =>
+      b.setAttribute("aria-pressed", String(b === boton)));
+    pintar();
+  });
+
+  pintar();
+</script>
+</body>
+</html>
