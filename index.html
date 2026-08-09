@@ -714,6 +714,31 @@
   .btn-girar:hover { transform: translateY(-2px); }
   .btn-girar:disabled { opacity: .5; cursor: default; transform: none; }
 
+  /* ── El bloque de la canción ── */
+  .cancion { margin-top: 26px; }
+  .cancion-nombre {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 19px;
+    color: var(--azul-tinta);
+    margin: 8px 0 2px;
+    text-wrap: balance;
+  }
+  .cancion-quien {
+    font-size: 11px;
+    letter-spacing: .16em;
+    text-transform: uppercase;
+    color: var(--tenue);
+    margin: 0 0 16px;
+  }
+  .spotify {
+    width: 100%;
+    border: 0;
+    border-radius: 12px;
+    display: block;
+    color-scheme: normal;
+  }
+
   /* ============================================================
      CONTROL DE MÚSICA
      ============================================================ */
@@ -882,6 +907,21 @@
       </div>
 
       <p class="pie">Te esperamos con el corazón lleno de amor</p>
+
+      <div class="cancion">
+        <div class="filete">
+          <svg class="estrella" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z"/>
+          </svg>
+        </div>
+        <p class="eyebrow">Su canción</p>
+        <p class="cancion-nombre">En Mi Corazón Vivirás</p>
+        <p class="cancion-quien">Phil Collins</p>
+        <iframe class="spotify" title="En Mi Corazón Vivirás, de Phil Collins, en Spotify"
+                src="https://open.spotify.com/embed/track/7tgR5zkdJzZc5OgMBwhwwx?utm_source=generator&amp;theme=0"
+                height="152" loading="lazy"
+                allow="encrypted-media; clipboard-write; fullscreen; picture-in-picture"></iframe>
+      </div>
     </article>
   </section>
 
