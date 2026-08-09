@@ -714,6 +714,53 @@
   .btn-girar:hover { transform: translateY(-2px); }
   .btn-girar:disabled { opacity: .5; cursor: default; transform: none; }
 
+  /* ============================================================
+     CONTROL DE MÚSICA
+     ============================================================ */
+  .musica {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 60;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    border: 1px solid rgba(192,160,92,.6);
+    background: rgba(252,249,244,.92);
+    color: var(--azul-tinta);
+    display: none;
+    place-items: center;
+    cursor: pointer;
+    box-shadow: 0 5px 16px rgba(74,58,40,.25);
+    transition: transform .2s ease, background .2s ease;
+  }
+  .musica.visible { display: grid; animation: entraNota .5s ease both; }
+  @keyframes entraNota {
+    from { opacity: 0; transform: scale(.7); }
+    to   { opacity: 1; transform: none; }
+  }
+  .musica:hover { transform: scale(1.07); }
+  .musica:focus-visible { outline: 2px solid var(--azul-tinta); outline-offset: 3px; }
+  .musica svg { width: 20px; height: 20px; fill: currentColor; }
+  .musica .tachada { display: none; }
+  .musica.callada { color: var(--tenue); background: rgba(252,249,244,.75); }
+  .musica.callada .sonando { display: none; }
+  .musica.callada .tachada { display: block; }
+
+  /* Ondas suaves mientras suena */
+  .musica.visible:not(.callada)::before {
+    content: "";
+    position: absolute;
+    inset: -5px;
+    border-radius: 50%;
+    border: 1px solid rgba(192,160,92,.5);
+    animation: onda 2.6s ease-out infinite;
+  }
+  @keyframes onda {
+    0%   { opacity: .7; transform: scale(1); }
+    100% { opacity: 0;  transform: scale(1.45); }
+  }
+
   .btn-wa {
     background: #FFF;
     border-color: rgba(37,211,102,.55);
@@ -767,6 +814,16 @@
       <button class="boton-abrir" id="btn-abrir">Toca para abrir</button>
     </div>
   </section>
+
+  <button class="musica" id="musica" aria-label="Silenciar o reactivar la música">
+    <svg class="sonando" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 3v12.5a3.5 3.5 0 11-2-3.16V6.9l7-1.4V13a3.5 3.5 0 11-2-3.16V3.2z"/>
+    </svg>
+    <svg class="tachada" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 3v12.5a3.5 3.5 0 11-2-3.16V6.9l7-1.4V13a3.5 3.5 0 11-2-3.16V3.2z" opacity=".5"/>
+      <path d="M3 3l18 18" stroke="currentColor" stroke-width="2" fill="none"/>
+    </svg>
+  </button>
 
   <!-- ══════════ ACTO 2 · LA INVITACIÓN ══════════ -->
   <section class="acto" id="acto-invitacion">
@@ -933,6 +990,11 @@
   const WHATSAPP = "573022871071";                 // Michael — con 57 y sin el +
   const FECHA    = new Date(2026, 8, 5, 18, 0, 0); // 5 de septiembre de 2026, 6:00 PM
 
+  // Música: deja un archivo llamado así junto a index.html.
+  // Si no existe, la invitación funciona igual y sin botón de música.
+  const MUSICA  = "cancion.mp3";
+  const VOLUMEN = 0.35;                            // suavecito, de fondo
+
   // REGALOS — cada casilla de la ruleta con la gente que le toca.
   //   corto  : lo que se alcanza a leer girando en la ruleta
   //   nombre : el regalo completo, el que se revela al final
@@ -1009,11 +1071,60 @@
     window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
   }
 
+  /* ── Música ──
+     Arranca cuando tocan el sobre, no antes: ese toque es el gesto que
+     los navegadores exigen para dejar sonar audio. Si el archivo no
+     existe, todo sigue igual y el botón ni aparece. */
+  const cancion = new Audio(MUSICA);
+  cancion.loop = true;
+  cancion.volume = 0;
+  cancion.preload = "auto";
+
+  let hayMusica = true;
+  let subiendo = null;
+
+  cancion.addEventListener("error", () => {
+    hayMusica = false;
+    $("musica").classList.remove("visible");
+  });
+
+  function subirVolumen() {
+    clearInterval(subiendo);
+    subiendo = setInterval(() => {
+      cancion.volume = Math.min(VOLUMEN, cancion.volume + VOLUMEN / 30);
+      if (cancion.volume >= VOLUMEN) clearInterval(subiendo);
+    }, 90);
+  }
+
+  function sonar() {
+    if (!hayMusica) return;
+    cancion.play().then(() => {
+      $("musica").classList.add("visible");
+      subirVolumen();
+    }).catch(() => {
+      // El navegador no la dejó sonar: dejamos el botón por si la quieren.
+      $("musica").classList.add("visible", "callada");
+    });
+  }
+
+  $("musica").addEventListener("click", () => {
+    if (cancion.paused) {
+      cancion.play().then(subirVolumen).catch(() => {});
+      $("musica").classList.remove("callada");
+    } else {
+      clearInterval(subiendo);
+      cancion.pause();
+      cancion.volume = 0;
+      $("musica").classList.add("callada");
+    }
+  });
+
   /* ── Acto 1: abrir el sobre ── */
   let abierto = false;
   function abrirSobre() {
     if (abierto) return;
     abierto = true;
+    sonar();
     $("sobre").classList.add("abriendo");
     $("sobre-escena").classList.add("abriendo");   // se lleva el rótulo y el botón
     setTimeout(() => $("sobre-escena").classList.add("saliendo"), 780);
