@@ -261,6 +261,21 @@
   .sobre.abriendo .lacre { opacity: 0; transform: scale(.5) rotate(-25deg); }
   .sobre.abriendo .cinta { opacity: 0; transition: opacity .45s ease .1s; }
   .sobre.abriendo .sobre-grabado { opacity: 0; transition: opacity .4s ease; }
+
+  /* El rótulo y el botón son indicaciones, no parte de la invitación:
+     se van suave apenas empieza la apertura, cada uno hacia su lado. */
+  .sobre-escena.abriendo .rotulo {
+    opacity: 0;
+    transform: translateY(-14px);
+    transition: opacity .5s ease, transform .6s cubic-bezier(.4,0,.2,1);
+    pointer-events: none;
+  }
+  .sobre-escena.abriendo .boton-abrir {
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity .45s ease, transform .6s cubic-bezier(.4,0,.2,1);
+    pointer-events: none;
+  }
   .sobre.abriendo .destello { animation: brillo 1.1s ease-out forwards; }
   @keyframes brillo {
     0%   { opacity: 0; transform: scale(.4); }
@@ -1004,9 +1019,9 @@
     if (abierto) return;
     abierto = true;
     $("sobre").classList.add("abriendo");
-    $("btn-abrir").style.visibility = "hidden";
-    setTimeout(() => $("sobre-escena").classList.add("saliendo"), 700);
-    setTimeout(() => mostrar("invitacion"), 1180);
+    $("sobre-escena").classList.add("abriendo");   // se lleva el rótulo y el botón
+    setTimeout(() => $("sobre-escena").classList.add("saliendo"), 780);
+    setTimeout(() => mostrar("invitacion"), 1260);
   }
   $("sobre").addEventListener("click", abrirSobre);
   $("btn-abrir").addEventListener("click", abrirSobre);
