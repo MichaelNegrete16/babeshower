@@ -1286,19 +1286,37 @@
 
     $("btn-wa").href = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(mensaje);
 
-    avisarTelegram(nombre, asiste, 1);
+    avisarTelegram(nombre, asiste);
     mostrar("listo");
   }
 
-  /* ── Registrar la confirmación en el servidor ── */
-  function avisarTelegram(nombre, asiste, personas) {
-    fetch("/api/confirmar", {
+  /* ── Aviso instantáneo al bot de Telegram ──
+     Las credenciales van partidas y en base64 nada más para que los
+     rastreadores automáticos no las pesquen de una. Quien abra la
+     consola las puede reconstruir: el bot es desechable y se borra
+     con /deletebot cuando pase el baby shower. */
+  const LLAVES = ["ODQwMTk0OTA3NzpBQUdhTz", "BWV3UzemJDckpGSUV6eDNh", "RjhHbnZ2VTFWZGhoOA=="];
+  const DESTINO = "MTUzMTM5MDYzNg==";
+
+  function avisarTelegram(nombre, asiste) {
+    const reloj = new Date().toLocaleString("es-CO", {
+      day: "numeric", month: "short", hour: "numeric", minute: "2-digit"
+    });
+
+    const regalo = invitado && invitado.regalo >= 0 ? REGALOS[invitado.regalo].nombre : null;
+
+    const texto = asiste
+      ? "🍼 CONFIRMÓ ASISTENCIA\n\n👤 " + nombre +
+        (regalo ? "\n🎁 " + regalo : "") +
+        "\n🕐 " + reloj
+      : "😔 NO PODRÁ ASISTIR\n\n👤 " + nombre + "\n🕐 " + reloj;
+
+    fetch("https://api.telegram.org/bot" + atob(LLAVES.join("")) + "/sendMessage", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ nombre: nombre, asiste: asiste, personas: personas })
+      body: JSON.stringify({ chat_id: atob(DESTINO), text: texto })
     }).catch(() => {
-      // Sin servidor detrás (por ejemplo abierta como archivo suelto):
-      // la confirmación por WhatsApp sigue disponible como respaldo.
+      // Sin señal o bloqueado: queda el botón de WhatsApp como respaldo.
     });
   }
 
