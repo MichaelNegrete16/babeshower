@@ -149,6 +149,13 @@
   }
   .opciones button:focus-visible { outline: 2px solid var(--azul); outline-offset: 2px; }
 
+  .pista {
+    font-size: 11.5px;
+    color: var(--pag-tenue);
+    margin: 7px 0 0;
+    line-height: 1.5;
+  }
+
   .interruptor {
     display: flex;
     align-items: center;
@@ -235,6 +242,12 @@
       </div>
 
       <div class="grupo">
+        <label for="regalo">Regalo que le toca</label>
+        <select id="regalo"></select>
+        <p class="pista" id="pista-regalo">Se elige solo al escribir el nombre</p>
+      </div>
+
+      <div class="grupo">
         <label class="interruptor">
           <input type="checkbox" id="con-datos">
           Incluir fecha, hora y lugar
@@ -266,6 +279,31 @@
     "Luz Elena", "Nilcy", "Ana Gulfo", "Tulia",
   ];
 
+  // Quién lleva qué. Al escribir el nombre, el regalo se elige solo.
+  const REGALOS = [
+    { nombre: "Paños etapa 1 + palitos húmedos",
+      quienes: ["Adrián", "Juan Pablo", "Antonio", "Alexandra"] },
+    { nombre: "Toallas de bebé", quienes: ["Darleys"] },
+    { nombre: "Sábanas para bebé", quienes: ["Iván Rey"] },
+    { nombre: "Kit de aseo recién nacido Arrurrú",
+      quienes: ["Diana", "Andrea Llanos", "Brenda", "Daniela", "Rossana", "Jessica", "Duvan", "Carlos"] },
+    { nombre: "Termo de acero inoxidable + paño etapa 1", quienes: ["Heyni"] },
+    { nombre: "Semanario talla 6-9 + kit de alimentación", quienes: ["Leandra"] },
+    { nombre: "Cargador para bebé", quienes: ["Lilibeth"] },
+    { nombre: "Silla de comer", quienes: ["Jean Pierre", "Félix"] },
+    { nombre: "Esterilizador de teteros", quienes: ["Daniela Acuña"] },
+    { nombre: "Coche", quienes: ["Jeni", "Dani"] },
+    { nombre: "Bañera", quienes: ["Biviana"] },
+    { nombre: "Set de teteros Philips Avent", quienes: ["Abraham", "Melanie"] },
+    { nombre: "Lluvia de sobres",
+      quienes: ["Abuelos", "Tía Berta", "Over", "Rafael", "Alejandra", "Andrea"] },
+    { nombre: "Lo que salga de tu corazón",
+      quienes: ["Tía Negris", "Tío Nandito", "Albertito", "Karina", "Tía Hilda",
+                "Oswaldito", "Oswaldo", "Franklin", "Tía Deysi"] },
+    { nombre: "Money 💸", quienes: ["Ricardo"] },
+    { nombre: "Silla de lactancia", quienes: ["Smartinfo"] },
+  ];
+
   const TONO = {
     fondo:   "#E6D5C0",
     fondoAlto: "#F1E4D2",
@@ -287,6 +325,24 @@
 
   document.getElementById("invitados").innerHTML =
     INVITADOS.map((n) => '<option value="' + n + '"></option>').join("");
+
+  document.getElementById("regalo").innerHTML =
+    '<option value="">— Sin regalo en la tarjeta —</option>' +
+    REGALOS.map((r) => '<option value="' + r.nombre + '">' + r.nombre + "</option>").join("");
+
+  const normalizar = (t) => String(t)
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  // Busca el regalo de esa persona y lo deja seleccionado
+  function regaloDe(nombre) {
+    const buscado = normalizar(nombre);
+    if (!buscado) return null;
+    const hallado = REGALOS.find((r) => r.quienes.some((q) => normalizar(q) === buscado));
+    return hallado ? hallado.nombre : null;
+  }
 
   /* ── Texto con espaciado entre letras, centrado ── */
   function anchoEspaciado(texto, esp) {
@@ -348,6 +404,19 @@
     ctx.stroke();
     ctx.globalAlpha = 1;
     estrella(cx, y, 11);
+  }
+
+  /* ── Parte un texto largo en dos líneas parejas ── */
+  function partirEnDos(texto) {
+    const palabras = texto.split(" ");
+    let corte = 0, mejor = Infinity;
+    for (let i = 1; i < palabras.length; i++) {
+      const izq = palabras.slice(0, i).join(" ").length;
+      const der = palabras.slice(i).join(" ").length;
+      const desnivel = Math.abs(izq - der);
+      if (desnivel < mejor) { mejor = desnivel; corte = i; }
+    }
+    return [palabras.slice(0, corte).join(" "), palabras.slice(corte).join(" ")];
   }
 
   /* ── Armar los bloques de la tarjeta ── */
@@ -446,6 +515,26 @@
           ctx.textAlign = "center";
           ctx.fillText("Escallonvilla, por la tienda donde Efrén", cx, y + 26);
         }
+      });
+    }
+
+    const regalo = document.getElementById("regalo").value;
+    if (regalo) {
+      filas.push({ gap: 40, alto: 20, pinta: (cx, y) => separador(cx, y + 10) });
+      etiqueta("TU REGALO PARA ÉL", 34);
+
+      // Los nombres largos se parten en dos líneas
+      const partes = regalo.length > 30 ? partirEnDos(regalo) : [regalo];
+      partes.forEach((linea, i) => {
+        filas.push({
+          gap: i === 0 ? 18 : 8, alto: 44,
+          pinta: (cx, y) => {
+            ctx.fillStyle = TONO.tinta;
+            ctx.font = "italic 38px " + SERIF;
+            ctx.textAlign = "center";
+            ctx.fillText(linea, cx, y + 36);
+          }
+        });
       });
     }
 
@@ -588,7 +677,20 @@
   });
 
   /* ── Controles ── */
-  document.getElementById("nombre").addEventListener("input", () => { pintar(); avisar(""); });
+  document.getElementById("nombre").addEventListener("input", (ev) => {
+    const suyo = regaloDe(ev.target.value);
+    const pista = document.getElementById("pista-regalo");
+    if (suyo) {
+      document.getElementById("regalo").value = suyo;
+      pista.textContent = "Puesto automáticamente. Puedes cambiarlo.";
+    } else {
+      pista.textContent = "Ese nombre no tiene regalo asignado. Elígelo a mano si quieres.";
+    }
+    pintar();
+    avisar("");
+  });
+
+  document.getElementById("regalo").addEventListener("change", pintar);
   document.getElementById("con-datos").addEventListener("change", pintar);
 
   document.getElementById("tratos").addEventListener("click", (ev) => {
