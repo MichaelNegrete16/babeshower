@@ -439,45 +439,6 @@
     background: rgba(252,249,244,.9);
   }
 
-  .contador-fila {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: rgba(230,213,192,.28);
-    border: 1px solid rgba(192,160,92,.35);
-    border-radius: 12px;
-    padding: 10px 12px 10px 17px;
-  }
-  .contador-fila span {
-    font-size: 10px;
-    letter-spacing: .2em;
-    text-transform: uppercase;
-    color: var(--tenue);
-  }
-  .stepper { display: flex; align-items: center; gap: 6px; }
-  .stepper button {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
-    border: 1px solid rgba(192,160,92,.5);
-    background: var(--papel);
-    color: var(--azul-tinta);
-    font-size: 17px;
-    line-height: 1;
-    cursor: pointer;
-    transition: background .2s ease;
-  }
-  .stepper button:hover { background: var(--fondo); }
-  .stepper button:focus-visible { outline: 2px solid var(--azul-tinta); outline-offset: 2px; }
-  .stepper output {
-    min-width: 30px;
-    text-align: center;
-    font-family: var(--serif);
-    font-size: 18px;
-    color: var(--azul-tinta);
-    font-variant-numeric: tabular-nums;
-  }
-
   .btn {
     width: 100%;
     padding: 17px;
@@ -571,6 +532,99 @@
     text-transform: uppercase;
     color: rgba(252,249,244,.62);
   }
+
+  /* ============================================================
+     LA RULETA DE REGALOS
+     ============================================================ */
+  .ruleta-zona { margin-top: 8px; }
+
+  .ruleta-marco {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+    margin: 18px auto 0;
+    aspect-ratio: 1;
+  }
+
+  #ruleta {
+    width: 100%;
+    height: 100%;
+    display: block;
+    border-radius: 50%;
+    box-shadow: 0 14px 34px rgba(47,79,104,.28), 0 0 0 7px var(--papel), 0 0 0 8px rgba(192,160,92,.55);
+  }
+
+  /* La aguja que marca el resultado */
+  .aguja {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 0;
+    height: 0;
+    border-left: 13px solid transparent;
+    border-right: 13px solid transparent;
+    border-top: 26px solid var(--azul-tinta);
+    filter: drop-shadow(0 3px 4px rgba(47,79,104,.4));
+    z-index: 3;
+  }
+
+  .eje {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 46px;
+    height: 46px;
+    margin: -23px 0 0 -23px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 34% 30%, var(--papel) 0%, var(--papel-alt) 70%);
+    box-shadow: 0 3px 10px rgba(47,79,104,.35), inset 0 0 0 1px rgba(192,160,92,.6);
+    display: grid;
+    place-items: center;
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--azul-tinta);
+    z-index: 2;
+  }
+
+  /* El premio revelado */
+  .premio {
+    margin-top: 22px;
+    padding: 22px 18px;
+    border-radius: 16px;
+    background: linear-gradient(165deg, rgba(127,164,196,.16), rgba(192,160,92,.12));
+    border: 1px solid rgba(192,160,92,.5);
+    animation: apareceRegalo .7s cubic-bezier(.2,.75,.3,1) both;
+  }
+  @keyframes apareceRegalo {
+    from { opacity: 0; transform: translateY(14px) scale(.95); }
+    to   { opacity: 1; transform: none; }
+  }
+  .premio .eyebrow { margin-bottom: 8px; }
+  .premio-nombre {
+    font-family: var(--serif);
+    font-size: 23px;
+    line-height: 1.35;
+    color: var(--azul-tinta);
+    margin: 0;
+    text-wrap: balance;
+  }
+  .premio-nota {
+    font-size: 11.5px;
+    line-height: 1.7;
+    color: var(--tenue);
+    margin: 12px 0 0;
+  }
+
+  .btn-girar {
+    background: linear-gradient(165deg, #C9A227, var(--oro));
+    color: #40320C;
+    border: none;
+    box-shadow: 0 8px 20px rgba(192,160,92,.42);
+    margin-top: 20px;
+  }
+  .btn-girar:hover { transform: translateY(-2px); }
+  .btn-girar:disabled { opacity: .5; cursor: default; transform: none; }
 
   .btn-wa {
     background: #FFF;
@@ -670,15 +724,6 @@
           <span id="verificado-texto">Invitación verificada</span>
         </p>
 
-        <div class="contador-fila">
-          <span id="etiqueta-cupos">Personas</span>
-          <div class="stepper">
-            <button type="button" id="menos" aria-label="Quitar un acompañante">−</button>
-            <output id="cantidad" aria-live="polite">1</output>
-            <button type="button" id="mas" aria-label="Agregar un acompañante">+</button>
-          </div>
-        </div>
-
         <button class="btn btn-primario" id="btn-si">¡Sí, allí estaré!</button>
         <button class="btn btn-secundario" id="btn-no">No podré asistir</button>
 
@@ -701,6 +746,31 @@
 
       <p class="parrafo" id="texto-listo" style="margin-top:14px"></p>
 
+      <div id="bloque-ruleta" class="ruleta-zona">
+        <div class="filete">
+          <svg class="estrella" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 0l2.6 9.4L24 12l-9.4 2.6L12 24l-2.6-9.4L0 12l9.4-2.6z"/>
+          </svg>
+        </div>
+
+        <p class="eyebrow">Gira y descubre qué le llevas</p>
+
+        <div class="ruleta-marco">
+          <span class="aguja"></span>
+          <canvas id="ruleta" width="620" height="620" role="img"
+                  aria-label="Ruleta de regalos para el baby shower"></canvas>
+          <span class="eje" aria-hidden="true">🎁</span>
+        </div>
+
+        <button class="btn btn-girar" id="btn-girar">Girar la ruleta</button>
+
+        <div class="premio" id="premio" hidden>
+          <p class="eyebrow">Te tocó llevar</p>
+          <p class="premio-nombre" id="premio-nombre"></p>
+          <p class="premio-nota" id="premio-nota"></p>
+        </div>
+      </div>
+
       <div id="bloque-detalles">
         <div class="filete">
           <svg class="estrella" viewBox="0 0 24 24" aria-hidden="true">
@@ -722,14 +792,14 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>
             <span class="dato-texto">
               <span class="dato-etiqueta">Hora</span>
-              <span class="dato-valor">7:00 PM</span>
+              <span class="dato-valor">6:00 PM</span>
             </span>
           </div>
           <div class="dato">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s7-6.4 7-11a7 7 0 10-14 0c0 4.6 7 11 7 11z"/><circle cx="12" cy="10" r="2.6"/></svg>
             <span class="dato-texto">
               <span class="dato-etiqueta">Lugar</span>
-              <span class="dato-valor">Escalón Villa, por la tienda donde Efrén</span>
+              <span class="dato-valor">Escallonvilla, por la tienda donde Efrén</span>
             </span>
           </div>
         </div>
@@ -745,7 +815,7 @@
           <div class="casilla"><b id="s">00</b><i>Seg</i></div>
         </div>
 
-        <p class="nota" style="margin-top:12px">para el 5 de septiembre · 7:00 PM</p>
+        <p class="nota" style="margin-top:12px">para el 5 de septiembre · 6:00 PM</p>
       </div>
 
       <div class="acciones">
@@ -767,49 +837,75 @@
   /* ══════════════════════ CONFIGURACIÓN ══════════════════════ */
 
   const WHATSAPP = "573022871071";                 // Michael — con 57 y sin el +
-  const FECHA    = new Date(2026, 8, 5, 19, 0, 0); // 5 de septiembre de 2026, 7:00 PM
+  const FECHA    = new Date(2026, 8, 5, 18, 0, 0); // 5 de septiembre de 2026, 6:00 PM
 
-  // LISTA DE INVITADOS — un nombre por línea, entre comillas y con coma al final.
-  // Opcional: agrega "| 4" para darle 4 cupos a esa persona (por defecto son 2).
-  const INVITADOS = [
-    "Bivi",
-    "Jeni",
+  // REGALOS — cada casilla de la ruleta con la gente que le toca.
+  //   corto  : lo que se alcanza a leer girando en la ruleta
+  //   nombre : el regalo completo, el que se revela al final
+  //   quienes: los invitados a los que les toca ese regalo
+  const REGALOS = [
+    { corto: "Pañales",      nombre: "Paños etapa 1 + palitos húmedos",
+      quienes: ["Adrián", "Juan Pablo", "Antonio", "Alexandra"] },
+
+    { corto: "Toallas",      nombre: "Toallas de bebé",
+      quienes: ["Darleys"] },
+
+    { corto: "Sábanas",      nombre: "Sábanas para bebé",
+      quienes: ["Iván Rey"] },
+
+    { corto: "Kit aseo",     nombre: "Kit de aseo recién nacido Arrurrú",
+      quienes: ["Diana", "Andrea Llanos", "Brenda", "Daniela", "Rossana", "Jessica", "Duvan", "Carlos"] },
+
+    { corto: "Termo",        nombre: "Termo de acero inoxidable + paquete de paño etapa 1",
+      quienes: ["Heiny"] },
+
+    { corto: "Semanario",    nombre: "Semanario talla 6-9 + kit de alimentación",
+      quienes: ["Leandra"] },
+
+    { corto: "Cargador",     nombre: "Cargador para bebé",
+      quienes: ["Lilibeth"] },
+
+    { corto: "Silla comer",  nombre: "Silla de comer",
+      quienes: ["Jean Pierre", "Félix"] },
+
+    { corto: "Esterilizador", nombre: "Esterilizador de teteros",
+      quienes: ["Daniela Acuña"] },
+
+    { corto: "Coche",        nombre: "Coche",
+      quienes: ["Jeni", "Dani"] },
+
+    { corto: "Bañera",       nombre: "Bañera",
+      quienes: ["Biviana"] },
+
+    { corto: "Teteros",      nombre: "Set de teteros Philips Avent",
+      quienes: ["Abraham", "Melanie"] },
+
+    { corto: "Sobres",       nombre: "Lluvia de sobres",
+      quienes: ["Abuelos", "Tía Berta", "Over", "Rafael", "Alejandra", "Andrea"] },
+
+    { corto: "Sorpresa",     nombre: "Lo que salga de tu corazón", libre: true,
+      quienes: ["Tía Negris", "Tío Nandito", "Albertito", "Karina", "Tía Hilda",
+                "Oswaldito", "Oswaldo", "Franklin", "Tía Deysi"] },
+
+    { corto: "Money",        nombre: "Money 💸",
+      quienes: ["Ricardo"] },
+
+    { corto: "Lactancia",    nombre: "Silla de lactancia",
+      quienes: ["Smartinfo"] },
+  ];
+
+  // Invitados que todavía no tienen regalo asignado: entran a la fiesta
+  // igual, solo que no les sale la ruleta.
+  const SIN_REGALO = [
     "Adanies",
-    "Adrián",
-    "Jean Pierre",
-    "Félix",
-    "Alexandra",
-    "Abraham",
-    "Melani",
-    "Leandra",
-    "Heyni",
-    "Daniela",
-    "Tía Negris",
-    "Ricardo",
-    "Juanpi",
-    "Antonio",
-    "Diana",
-    "Andrea Llanos",
-    "Brenda",
-    "Darley",
-    "Iván Rey",
-    "Sebastián",
     "Lucho",
-    "Albertito",
-    "Karina",
-    "Tía Hilda",
+    "Sebastián",
     "Gledys",
-    "Oswaldito",
-    "Oswaldo",
-    "Franklin",
-    "Tía Deysi",
     "Luz Elena",
     "Nilcy",
     "Ana Gulfo",
     "Tulia",
   ];
-
-  const CUPOS_POR_DEFECTO = 2;
 
   // Las confirmaciones se mandan al servidor (servidor.py), que es quien
   // habla con Telegram. Así el token nunca viaja al navegador del invitado.
@@ -838,15 +934,18 @@
   $("sobre").addEventListener("click", abrirSobre);
   $("btn-abrir").addEventListener("click", abrirSobre);
 
-  /* ── Lista de invitados ── */
-  const lista = INVITADOS.map((linea) => {
-    const partes = String(linea).split("|");
-    const cupos = parseInt(partes[1], 10);
-    return {
-      nombre: partes[0].trim(),
-      cupos: cupos > 0 ? cupos : CUPOS_POR_DEFECTO
-    };
-  }).filter((i) => i.nombre.length > 0);
+  /* ── Lista de invitados, armada desde los regalos ── */
+  const lista = [];
+
+  REGALOS.forEach((regalo, indice) => {
+    regalo.quienes.forEach((nombre) => {
+      lista.push({ nombre: nombre, regalo: indice });
+    });
+  });
+
+  SIN_REGALO.forEach((nombre) => {
+    lista.push({ nombre: nombre, regalo: -1 });
+  });
 
   // Compara sin tildes, sin mayúsculas y sin espacios de más
   const normalizar = (t) => String(t)
@@ -856,17 +955,9 @@
     .trim();
 
   let invitado = null;
-  let cantidad = 1;
-
-  const pintarCantidad = () => { $("cantidad").textContent = cantidad; };
 
   function marcarInvitado(item) {
     invitado = item;
-    cantidad = Math.min(cantidad, item.cupos);
-    pintarCantidad();
-    $("etiqueta-cupos").textContent = item.cupos === 1
-      ? "Tienes 1 cupo"
-      : "Tienes " + item.cupos + " cupos";
     $("verificado-texto").textContent = "Invitación verificada";
     $("verificado").classList.add("visible");
     $("nombre").classList.remove("error");
@@ -876,7 +967,6 @@
   function olvidarInvitado() {
     invitado = null;
     $("verificado").classList.remove("visible");
-    $("etiqueta-cupos").textContent = "Personas";
   }
 
   function limpiarAviso() {
@@ -938,14 +1028,6 @@
 
   $("nombre").addEventListener("blur", () => setTimeout(cerrarSugerencias, 120));
 
-  /* ── Cupos ── */
-  $("mas").addEventListener("click", () => {
-    const tope = invitado ? invitado.cupos : 1;
-    if (cantidad < tope) { cantidad++; pintarCantidad(); }
-    else if (invitado) { avisar("Tu invitación es para " + tope + (tope === 1 ? " persona" : " personas")); }
-    else { avisar("Busca tu nombre primero"); }
-  });
-  $("menos").addEventListener("click", () => { if (cantidad > 1) { cantidad--; pintarCantidad(); } });
 
   /* ── Acto 2 → 3: confirmar ── */
   function confirmar(asiste) {
@@ -971,7 +1053,6 @@
     }
 
     const nombre = invitado.nombre;
-    const personas = asiste ? cantidad : 0;
 
     if (asiste) {
       $("titulo-listo").textContent = "¡Gracias por confirmar!";
@@ -981,23 +1062,35 @@
       $("bloque-cuenta").style.display = "";
       $("btn-cal").style.display = "";
       $("btn-gcal").style.display = "";
+
+      // La ruleta solo aparece si esa persona tiene un regalo asignado.
+      if (invitado.regalo >= 0) {
+        $("bloque-ruleta").style.display = "";
+        prepararRuleta();
+      } else {
+        $("bloque-ruleta").style.display = "none";
+      }
     } else {
       $("titulo-listo").textContent = "Te vamos a extrañar";
       $("texto-listo").textContent = "Gracias por avisarnos, " + nombre.split(" ")[0] +
         ". Te mandamos un abrazo y te contaremos todo.";
+      $("bloque-ruleta").style.display = "none";
       $("bloque-detalles").style.display = "none";
       $("bloque-cuenta").style.display = "none";
       $("btn-cal").style.display = "none";
       $("btn-gcal").style.display = "none";
     }
 
+    const regalo = invitado.regalo >= 0 ? REGALOS[invitado.regalo] : null;
+
     const mensaje = asiste
-      ? "¡Hola! Soy " + nombre + ". Confirmo mi asistencia al Baby Shower de Isaac David el 5 de septiembre a las 7:00 PM. Vamos " + personas + (personas === 1 ? " persona." : " personas.")
+      ? "¡Hola! Soy " + nombre + ". Confirmo mi asistencia al Baby Shower de Isaac David el 5 de septiembre a las 6:00 PM." +
+        (regalo ? " Me tocó llevar: " + regalo.nombre + "." : "")
       : "¡Hola! Soy " + nombre + ". Lamentablemente no podré acompañarlos en el Baby Shower de Isaac David, pero les mando un abrazo enorme.";
 
     $("btn-wa").href = "https://wa.me/" + WHATSAPP + "?text=" + encodeURIComponent(mensaje);
 
-    avisarTelegram(nombre, asiste, personas);
+    avisarTelegram(nombre, asiste, 1);
     mostrar("listo");
 
     // El evento se agrega solo al calendario de quien confirma que sí viene.
@@ -1024,6 +1117,130 @@
     mostrar("invitacion");
   });
 
+  /* ── Ruleta de regalos ──
+     Gira como cualquier ruleta, pero siempre cae en el regalo que ya
+     tiene asignado quien confirmó. La sorpresa es para el invitado. */
+  const lienzo = $("ruleta");
+  const pincel = lienzo.getContext("2d");
+  const CASILLAS = REGALOS.length;
+  const PASO = (Math.PI * 2) / CASILLAS;
+
+  const COLORES = [
+    { fondo: "#7FA4C4", tinta: "#FCF9F4" },
+    { fondo: "#FAF3E8", tinta: "#2F4F68" },
+    { fondo: "#3E627F", tinta: "#FCF9F4" },
+    { fondo: "#EFE0CB", tinta: "#2F4F68" },
+  ];
+
+  let giro = 0;
+  let girando = false;
+
+  function dibujarRuleta(rotacion) {
+    const ancho = lienzo.width;
+    const radio = ancho / 2;
+
+    pincel.clearRect(0, 0, ancho, ancho);
+    pincel.save();
+    pincel.translate(radio, radio);
+    pincel.rotate(rotacion);
+
+    for (let i = 0; i < CASILLAS; i++) {
+      // La casilla 0 arranca centrada arriba, donde apunta la aguja.
+      const desde = i * PASO - Math.PI / 2 - PASO / 2;
+      const color = COLORES[i % COLORES.length];
+
+      pincel.beginPath();
+      pincel.moveTo(0, 0);
+      pincel.arc(0, 0, radio - 8, desde, desde + PASO);
+      pincel.closePath();
+      pincel.fillStyle = color.fondo;
+      pincel.fill();
+      pincel.strokeStyle = "rgba(192,160,92,.6)";
+      pincel.lineWidth = 2;
+      pincel.stroke();
+
+      pincel.save();
+      pincel.rotate(desde + PASO / 2);
+      pincel.textAlign = "right";
+      pincel.textBaseline = "middle";
+      pincel.fillStyle = color.tinta;
+      pincel.font = "600 27px Georgia, 'Times New Roman', serif";
+      pincel.fillText(REGALOS[i].corto, radio - 30, 0);
+      pincel.restore();
+    }
+
+    pincel.restore();
+  }
+
+  function girarHasta(indice, alTerminar) {
+    if (girando) return;
+    girando = true;
+
+    const vueltas = 6;
+    const desvio = (Math.random() - 0.5) * PASO * 0.55;  // que no caiga siempre clavada
+    const destino = vueltas * Math.PI * 2 - indice * PASO + desvio;
+    const arranque = giro;
+    const recorrido = destino - arranque;
+    const duracion = 4600;
+
+    const quieto = window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (quieto) {
+      giro = destino;
+      dibujarRuleta(giro);
+      girando = false;
+      alTerminar();
+      return;
+    }
+
+    let inicio = null;
+    function cuadro(ahora) {
+      if (inicio === null) inicio = ahora;
+      const avance = Math.min(1, (ahora - inicio) / duracion);
+      const suave = 1 - Math.pow(1 - avance, 4);   // frena al final
+      giro = arranque + recorrido * suave;
+      dibujarRuleta(giro);
+      if (avance < 1) requestAnimationFrame(cuadro);
+      else { girando = false; alTerminar(); }
+    }
+    requestAnimationFrame(cuadro);
+  }
+
+  function prepararRuleta() {
+    $("premio").hidden = true;
+    $("btn-girar").disabled = false;
+    $("btn-girar").textContent = "Girar la ruleta";
+    dibujarRuleta(giro);
+  }
+
+  $("btn-girar").addEventListener("click", () => {
+    if (!invitado || invitado.regalo < 0 || girando) return;
+
+    $("btn-girar").disabled = true;
+    $("btn-girar").textContent = "Girando…";
+
+    girarHasta(invitado.regalo, () => {
+      const regalo = REGALOS[invitado.regalo];
+
+      $("premio-nombre").textContent = regalo.nombre;
+
+      if (regalo.libre) {
+        $("premio-nota").textContent = "Sin compromiso: lo que tú quieras llevarle.";
+      } else if (regalo.quienes.length > 1) {
+        $("premio-nota").textContent = "Este regalo va entre " + regalo.quienes.length +
+          ": " + regalo.quienes.join(", ") + ". Pónganse de acuerdo entre ustedes.";
+      } else {
+        $("premio-nota").textContent = "Este regalo es solo tuyo.";
+      }
+
+      $("premio").hidden = false;
+      $("btn-girar").textContent = "¡Ya sabes qué llevar!";
+    });
+  });
+
+  dibujarRuleta(0);
+
   /* ── Cuenta regresiva ── */
   const dosDigitos = (n) => String(n).padStart(2, "0");
 
@@ -1046,7 +1263,7 @@
   setInterval(tic, 1000);
 
   /* ── Calendario ── */
-  const LUGAR = "Escalón Villa, por la tienda donde Efrén";
+  const LUGAR = "Escallonvilla, por la tienda donde Efrén";
   const TITULO_EVENTO = "Baby Shower de Isaac David";
 
   // Intenta agregar el evento sin que tengan que tocar nada.
@@ -1078,7 +1295,7 @@
       "DTSTART:" + utc(FECHA),
       "DTEND:" + utc(fin),
       "SUMMARY:Baby Shower de Isaac David",
-      "LOCATION:Escalón Villa, por la tienda donde Efrén",
+      "LOCATION:Escallonvilla, por la tienda donde Efrén",
       "DESCRIPTION:Te esperamos con el corazón lleno de amor.",
       "END:VEVENT",
       "END:VCALENDAR"
