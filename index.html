@@ -167,19 +167,21 @@
     z-index: 2;
   }
 
-  /* Cinta de raso: los brillos son las bandas claras del degradado */
+  /* Cinta de raso, horizontal y a la altura del lacre: el sello va
+     encima de ella, como en las invitaciones de verdad. Va horizontal
+     a propósito — vertical le pasaba por encima al nombre grabado.
+     Los brillos son las bandas claras del degradado. */
   .cinta {
     position: absolute;
-    left: 50%;
-    top: 0;
-    width: 36px;
-    height: 100%;
-    margin-left: -18px;
+    left: 0;
+    right: 0;
+    top: 86px;
+    height: 34px;
     z-index: 2;
-    background: linear-gradient(90deg,
-      #5A82A5 0%, #7FA4C4 18%, #B6D0E2 38%,
-      #D6E6F1 48%, #A8C2D8 62%, #7FA4C4 82%, #4E7C9E 100%);
-    box-shadow: 0 0 12px rgba(47,79,104,.28);
+    background: linear-gradient(180deg,
+      #4E7C9E 0%, #7FA4C4 16%, #B6D0E2 36%,
+      #D6E6F1 47%, #A8C2D8 60%, #7FA4C4 80%, #4E7C9E 100%);
+    box-shadow: 0 3px 9px rgba(47,79,104,.32);
   }
 
   /* La solapa ahora es del mismo papel, con filo dorado */
